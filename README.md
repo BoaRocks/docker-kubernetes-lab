@@ -1,143 +1,183 @@
-# NGINX Security & Reverse Proxy Lab
+# Docker & Kubernetes Deployment Lab
 
-A hands-on infrastructure lab demonstrating NGINX reverse proxy configuration, HTTPS/TLS termination, request rate limiting, security headers, and web-service troubleshooting.
+A hands-on infrastructure lab demonstrating containerization with Docker and application deployment using Kubernetes.
 
 ## Overview
 
-This project creates a small reverse-proxy environment using NGINX and Docker Compose. Client traffic is received by an NGINX proxy and forwarded to a backend web service.
+This project packages a simple web service into a Docker container and provides Kubernetes manifests for deploying and exposing the application.
 
-The configuration also demonstrates HTTPS redirection, TLS termination, rate limiting, proxy headers, and basic HTTP security headers.
+The lab focuses on containerization, deployment configuration, service networking, workload management, and troubleshooting.
 
 ## Technologies
 
+- Docker
+- Kubernetes
 - Linux
 - NGINX
-- Docker
-- HTTP/HTTPS
-- TLS
-- OpenSSL
+- YAML
+- HTML
 
 ## Architecture
 
-Client  
+Web Application  
 ↓  
-NGINX Reverse Proxy  
+Docker Container  
 ↓  
-Backend Web Service
-
-NGINX handles incoming HTTP/HTTPS requests before forwarding traffic to the backend container.
+Kubernetes Deployment  
+↓  
+Kubernetes Service
 
 ## Features
 
-- NGINX reverse proxy
-- HTTP to HTTPS redirection
-- TLS 1.2 and TLS 1.3
-- Self-signed certificate support for local testing
-- Request rate limiting
-- Reverse-proxy headers
-- Basic security headers
-- Docker Compose environment
+- Lightweight NGINX-based container
+- Custom Docker image
+- Kubernetes Deployment
+- Two application replicas
+- Kubernetes Service
+- Health/readiness checking
+- Resource requests and limits
+- Reproducible infrastructure configuration
 
 ## Repository Files
 
-`nginx.conf`  
-Main NGINX configuration containing HTTPS, reverse proxy, rate limiting, and security settings.
+`Dockerfile`  
+Defines the application container.
 
-`docker-compose.yml`  
-Creates the NGINX proxy and backend containers.
+`index.html`  
+Simple web page served by NGINX.
 
-`generate-certs.sh`  
-Generates a self-signed TLS certificate for local testing.
+`deployment.yaml`  
+Defines the Kubernetes Deployment and application replicas.
 
-`.gitignore`  
-Prevents generated certificates and local files from being committed.
+`service.yaml`  
+Creates a Kubernetes Service for accessing the application.
 
-## Running the Lab
+`.dockerignore`  
+Excludes unnecessary files from the Docker build context.
 
-Generate a local TLS certificate:
-
-```bash
-chmod +x generate-certs.sh
-./generate-certs.sh
-```
-
-Start the containers:
+## Build the Docker Image
 
 ```bash
-docker compose up -d
+docker build -t docker-kubernetes-lab:local .
 ```
 
-Open:
+## Run with Docker
+
+```bash
+docker run --rm -p 8080:80 docker-kubernetes-lab:local
+```
+
+Then open:
 
 ```text
-https://localhost:8443
+http://localhost:8080
 ```
 
-Because the lab uses a self-signed certificate, the browser may display a certificate warning during local testing.
+## Deploy to Kubernetes
+
+Apply the Deployment:
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+Apply the Service:
+
+```bash
+kubectl apply -f service.yaml
+```
+
+## Verify the Deployment
+
+Check deployments:
+
+```bash
+kubectl get deployments
+```
+
+Check pods:
+
+```bash
+kubectl get pods
+```
+
+Check services:
+
+```bash
+kubectl get services
+```
+
+## Access the Application
+
+Port-forward the Kubernetes Service:
+
+```bash
+kubectl port-forward service/docker-kubernetes-lab-service 8080:80
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
 
 ## Useful Troubleshooting Commands
 
-Validate the NGINX configuration:
+Inspect a pod:
 
 ```bash
-docker compose exec proxy nginx -t
+kubectl describe pod <pod-name>
 ```
 
-View running containers:
+View application logs:
 
 ```bash
-docker compose ps
+kubectl logs <pod-name>
 ```
 
-View proxy logs:
+Check pod status:
 
 ```bash
-docker compose logs proxy
+kubectl get pods -o wide
 ```
 
-View backend logs:
+Inspect the deployment:
 
 ```bash
-docker compose logs backend
+kubectl describe deployment docker-kubernetes-lab
 ```
 
-Test HTTPS from the command line:
+Check service configuration:
 
 ```bash
-curl -k https://localhost:8443
-```
-
-Stop the environment:
-
-```bash
-docker compose down
+kubectl describe service docker-kubernetes-lab-service
 ```
 
 ## Troubleshooting Approach
 
-When diagnosing reverse-proxy issues, useful checks include:
+When diagnosing deployment issues, useful checks include:
 
-1. Confirming that both containers are running
-2. Validating the NGINX configuration
-3. Reviewing proxy and backend logs
-4. Testing network connectivity between services
-5. Checking HTTP response codes
-6. Verifying certificate paths and permissions
-7. Confirming that the backend service is reachable
+1. Checking pod status
+2. Reviewing container logs
+3. Inspecting Kubernetes events
+4. Confirming image availability
+5. Checking labels and selectors
+6. Verifying container ports
+7. Confirming Service connectivity
+8. Reviewing readiness probe status
 
 ## Skills Demonstrated
 
-- Linux system configuration
-- NGINX administration
-- HTTP and HTTPS concepts
-- TLS configuration
-- Reverse proxy configuration
-- Rate limiting
-- Docker networking
-- Technical troubleshooting
+- Docker containerization
+- Kubernetes configuration
+- Linux
+- Infrastructure deployment
+- YAML configuration
+- Service networking
+- Container troubleshooting
 - Log analysis
 - Technical documentation
 
 ## Purpose
 
-This repository is part of my technical portfolio focused on systems, networking, cybersecurity, and troubleshooting.
+This repository is part of my technical portfolio focused on systems, networking, cybersecurity, infrastructure, and troubleshooting.
