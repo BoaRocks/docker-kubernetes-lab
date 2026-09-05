@@ -1,30 +1,38 @@
-# Docker & Kubernetes Deployment Lab
+# NGINX Security & Reverse Proxy Lab
 
-A small infrastructure lab demonstrating containerized application deployment
-and Kubernetes configuration.
+A hands-on portfolio lab demonstrating reverse proxy configuration, request
+routing, rate limiting, HTTP troubleshooting, and TLS termination concepts
+using NGINX and Docker.
+
+## Overview
+
+This lab uses NGINX as a reverse proxy in front of a separate backend web
+service. Requests enter through the proxy, are evaluated against a per-client
+rate limit, and are forwarded to the backend container.
+
+The project is designed to demonstrate practical Linux, networking,
+configuration, troubleshooting, and security concepts in a small reproducible
+environment.
 
 ## Technologies
+
+- NGINX
 - Docker
-- Kubernetes
+- Docker Compose
 - Linux
-- YAML
+- HTTP/HTTPS
+- TCP/IP
+- TLS
 
-## What This Lab Demonstrates
-- Containerized application deployment
-- Kubernetes Deployments and Services
-- Replica management
-- Service discovery concepts
-- Basic troubleshooting of containerized workloads
+## Architecture
 
-## Kubernetes Files
-- `deployment.yaml` creates two application replicas
-- `service.yaml` exposes the application internally through a Kubernetes Service
-
-## Useful Troubleshooting Commands
-
-```bash
-kubectl get pods
-kubectl get deployments
-kubectl get services
-kubectl describe pod <pod-name>
-kubectl logs <pod-name>
+```text
+Client
+  |
+  | HTTP :8080
+  v
+NGINX Reverse Proxy
+  |
+  | Internal Docker network
+  v
+Backend NGINX Service
