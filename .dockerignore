@@ -1,0 +1,6 @@
+.git
+.gitignore
+README.md
+deployment.yaml
+service.yaml
+.DS_Store
