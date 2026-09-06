@@ -178,6 +178,9 @@ When diagnosing deployment issues, useful checks include:
 - Log analysis
 - Technical documentation
 
+image: docker-kubernetes-lab:local
+imagePullPolicy: Never
+
 ## Purpose
 
 This repository is part of my technical portfolio focused on systems, networking, cybersecurity, infrastructure, and troubleshooting.
