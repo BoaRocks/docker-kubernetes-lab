@@ -1,0 +1,46 @@
+name: Docker Kubernetes CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t docker-kubernetes-lab:local .
+
+      - name: Start Docker container
+        run: docker run -d --name portfolio-web -p 8080:80 docker-kubernetes-lab:local
+
+      - name: Test web application
+        run: |
+          for i in {1..20}; do
+            if curl -fsS http://localhost:8080 > /dev/null; then
+              echo "Web application is responding."
+              exit 0
+            fi
+            sleep 1
+          done
+
+          docker logs portfolio-web
+          exit 1
+
+      - name: Validate Kubernetes manifests
+        run: |
+          docker run --rm \
+            -v "$PWD:/work" \
+            ghcr.io/yannh/kubeconform:latest \
+            -strict \
+            -summary \
+            /work/deployment.yaml \
+            /work/service.yaml
+
+      - name: Clean up
+        if: always()
+        run: docker rm -f portfolio-web || true
